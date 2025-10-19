@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import EventCard from "../../components/EventCard";
 import EventFormModal from "../../components/modals/EventFormModal";
+import EventDetailsPage from "../EventDetailsPage";
 import { useAuth } from "../../context/AuthContext";
 
-const API_URL = import.meta.env.VITE_API_URL+'/api' || "http://localhost:8080/api";
+const API_URL =
+  import.meta.env.VITE_API_URL + "/api" || "http://localhost:8080/api";
 
 const AdminEventsPage = () => {
   const [events, setEvents] = useState([]);
@@ -15,6 +17,7 @@ const AdminEventsPage = () => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedEventId, setSelectedEventId] = useState(null);
   const { token } = useAuth();
 
   useEffect(() => {
@@ -100,6 +103,23 @@ const AdminEventsPage = () => {
     setShowModal(true);
   };
 
+  // If viewing event details, show EventDetailsPage
+  if (selectedEventId) {
+    return (
+      <EventDetailsPage
+        eventId={selectedEventId}
+        onBack={() => setSelectedEventId(null)}
+        onEdit={(event) => {
+          setEditingEvent(event);
+          setShowModal(true);
+          setSelectedEventId(null); // Close details page
+        }}
+        onDelete={handleDeleteEvent}
+        isAdmin={true}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-xl shadow-md p-6 flex justify-between items-center">
@@ -143,9 +163,10 @@ const AdminEventsPage = () => {
               <EventCard
                 key={event.id}
                 event={event}
+                isAdmin={true}
                 onEdit={handleEdit}
                 onDelete={handleDeleteEvent}
-                isAdmin={true}
+                onClick={() => setSelectedEventId(event.id)}
               />
             ))}
           </div>
