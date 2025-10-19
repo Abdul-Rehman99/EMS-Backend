@@ -95,3 +95,5 @@ export const getEventBookings = asyncHandler(async (req, res) => {
   const bookings = await Booking.findAll({ where: { event_id: eventId } });
   res.json(bookings);
 });
+
+
