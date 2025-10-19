@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
-import { User } from "./User.js";
 
 export const Event = sequelize.define("Event", {
   id: { type: DataTypes.INTEGER.UNSIGNED, primaryKey: true, autoIncrement: true },
@@ -14,4 +13,3 @@ export const Event = sequelize.define("Event", {
   available_seats: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false, defaultValue: 0 }
 });
 
-// associations set in index (below)

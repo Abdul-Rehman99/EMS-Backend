@@ -1,28 +1,42 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Ticket } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Ticket } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 // Login/Register Component
+
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login, register } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
+
+    const toastId = toast.loading(
+      isLogin ? "Signing in..." : "Creating account..."
+    );
+
     try {
       if (isLogin) {
         await login(formData.email, formData.password);
+        toast.success("Welcome back! 👋", { id: toastId });
       } else {
         await register(formData.name, formData.email, formData.password);
+        toast.success("Account created successfully! 🎉", { id: toastId });
       }
     } catch (err) {
       setError(err.message);
+      toast.error(err.message, { id: toastId });
     } finally {
       setLoading(false);
     }
@@ -51,13 +65,17 @@ const AuthPage = () => {
         <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setIsLogin(true)}
-            className={`flex-1 py-2 rounded-md transition-all ${isLogin ? 'bg-white shadow-sm font-semibold' : 'text-gray-600'}`}
+            className={`flex-1 py-2 rounded-md transition-all ${
+              isLogin ? "bg-white shadow-sm font-semibold" : "text-gray-600"
+            }`}
           >
             Login
           </button>
           <button
             onClick={() => setIsLogin(false)}
-            className={`flex-1 py-2 rounded-md transition-all ${!isLogin ? 'bg-white shadow-sm font-semibold' : 'text-gray-600'}`}
+            className={`flex-1 py-2 rounded-md transition-all ${
+              !isLogin ? "bg-white shadow-sm font-semibold" : "text-gray-600"
+            }`}
           >
             Register
           </button>
@@ -69,7 +87,9 @@ const AuthPage = () => {
               type="text"
               placeholder="Full Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
               required
             />
@@ -78,7 +98,9 @@ const AuthPage = () => {
             type="email"
             placeholder="Email Address"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
             required
           />
@@ -86,7 +108,9 @@ const AuthPage = () => {
             type="password"
             placeholder="Password"
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
             required
           />
@@ -108,7 +132,7 @@ const AuthPage = () => {
             disabled={loading}
             className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
           >
-            {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
+            {loading ? "Processing..." : isLogin ? "Sign In" : "Create Account"}
           </motion.button>
         </form>
       </motion.div>

@@ -6,8 +6,6 @@ import { useAuth } from '../../context/AuthContext';
 // API Base URL - Update this to your backend URL
 const API_URL = 'http://localhost:8080/api';
 
-
-// Admin Dashboard
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,7 +21,6 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      console.log("AdminDashboard",data);
       setStats(data);
     } catch (err) {
       console.error(err);

@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import { Calendar, MapPin, Clock, Users, Edit, Trash2 } from 'lucide-react';
+import { motion } from "framer-motion";
+import { Calendar, MapPin, Clock, Users, Edit, Trash2 } from "lucide-react";
 
 const EventCard = ({ event, onBook, onEdit, onDelete, isAdmin, onClick }) => {
   return (
@@ -12,7 +12,11 @@ const EventCard = ({ event, onBook, onEdit, onDelete, isAdmin, onClick }) => {
     >
       <div className="h-48 bg-gradient-to-br from-purple-400 to-pink-400 relative overflow-hidden">
         {event.image ? (
-          <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
+          <img
+            src={event.image}
+            alt={event.title}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className="flex items-center justify-center h-full">
             <Calendar className="w-20 h-20 text-white opacity-50" />
@@ -20,19 +24,29 @@ const EventCard = ({ event, onBook, onEdit, onDelete, isAdmin, onClick }) => {
         )}
         {event.available_seats === 0 && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <span className="bg-red-500 text-white px-4 py-2 rounded-full font-semibold">Sold Out</span>
+            <span className="bg-red-500 text-white px-4 py-2 rounded-full font-semibold">
+              Sold Out
+            </span>
           </div>
         )}
       </div>
 
       <div className="p-5">
-        <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-1">{event.title}</h3>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">{event.description || 'No description available'}</p>
+        <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-1">
+          {event.title}
+        </h3>
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+          {event.description || "No description available"}
+        </p>
 
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-gray-600 text-sm">
             <Calendar className="w-4 h-4 mr-2 text-purple-500" />
-            {new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            {new Date(event.date).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
           </div>
           {event.time && (
             <div className="flex items-center text-gray-600 text-sm">
@@ -53,7 +67,9 @@ const EventCard = ({ event, onBook, onEdit, onDelete, isAdmin, onClick }) => {
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-purple-600">${event.price}</span>
+          <span className="text-2xl font-bold text-purple-600">
+            ${event.price}
+          </span>
           {isAdmin ? (
             <div className="flex gap-2">
               <button
@@ -80,7 +96,7 @@ const EventCard = ({ event, onBook, onEdit, onDelete, isAdmin, onClick }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={(e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // ADD THIS LINE
                 onBook(event);
               }}
               disabled={event.available_seats === 0}

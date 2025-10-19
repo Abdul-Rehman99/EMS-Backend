@@ -36,7 +36,6 @@ const PORT = process.env.PORT || 5000;
     await sequelize.authenticate();
     console.log("✅ DB connection established");
     // generateDummyData();
-    // NOTE: sync should be used carefully in prod. Use migrations for production.
     await sequelize.sync({ alter: true });
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   } 

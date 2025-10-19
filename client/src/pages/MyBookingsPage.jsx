@@ -2,10 +2,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Ticket } from 'lucide-react';
-import EventCard from '../components/EventCard';
-import EventFormModal from '../components/modals/EventFormModal';
-import BookingModal from '../components/modals/BookingModal';
 import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 // API Base URL - Update this to your backend URL
 const API_URL = 'http://localhost:8080/api';
@@ -33,22 +31,26 @@ const MyBookingsPage = () => {
     }
   };
 
-  const handleCancelBooking = async (bookingId) => {
-    if (!confirm('Are you sure you want to cancel this booking?')) return;
-    try {
-      const res = await fetch(`${API_URL}/bookings/${bookingId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.ok) {
-        alert('Booking cancelled successfully');
-        fetchBookings();
-      }
-    } catch (err) {
-      alert('Error cancelling booking');
+const handleCancelBooking = async (bookingId) => {
+  if (!confirm('Are you sure you want to cancel this booking?')) return;
+  
+  const toastId = toast.loading('Cancelling booking...');
+  
+  try {
+    const res = await fetch(`${API_URL}/bookings/${bookingId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (res.ok) {
+      toast.success('Booking cancelled successfully', { id: toastId });
+      fetchBookings();
+    } else {
+      toast.error('Failed to cancel booking', { id: toastId });
     }
-  };
-
+  } catch (err) {
+    toast.error('Error cancelling booking', { id: toastId });
+  }
+};
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-xl shadow-md p-6">
