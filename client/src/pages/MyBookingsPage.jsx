@@ -1,4 +1,3 @@
-// My Bookings Page
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Ticket } from 'lucide-react';

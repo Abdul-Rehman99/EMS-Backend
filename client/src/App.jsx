@@ -9,7 +9,6 @@ import AdminEventsPage from './pages/admin/AdminEventsPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
 
-// Main App Component
 const App = () => {
   const { user, logout, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState('events');

@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Ticket } from "lucide-react";
+import { Ticket, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
-
-// Login/Register Component
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,6 +13,7 @@ const AuthPage = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login, register } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -49,6 +48,7 @@ const AuthPage = () => {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md"
       >
+        {/* Header */}
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0 }}
@@ -62,6 +62,7 @@ const AuthPage = () => {
           <p className="text-gray-600 mt-2">Your Gateway to Amazing Events</p>
         </div>
 
+        {/* Toggle buttons */}
         <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
           <button
             onClick={() => setIsLogin(true)}
@@ -81,6 +82,7 @@ const AuthPage = () => {
           </button>
         </div>
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
             <input
@@ -94,6 +96,7 @@ const AuthPage = () => {
               required
             />
           )}
+
           <input
             type="email"
             placeholder="Email Address"
@@ -104,17 +107,33 @@ const AuthPage = () => {
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
             required
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-            required
-          />
 
+          {/* Password Input with toggle */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? (
+                <EyeOff className="w-5 h-5" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
+            </button>
+          </div>
+
+          {/* Error message */}
           {error && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -125,6 +144,7 @@ const AuthPage = () => {
             </motion.div>
           )}
 
+          {/* Submit Button */}
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -135,6 +155,23 @@ const AuthPage = () => {
             {loading ? "Processing..." : isLogin ? "Sign In" : "Create Account"}
           </motion.button>
         </form>
+
+        {/* Demo Credentials */}
+        <div className="mt-6 text-sm text-gray-600 text-center bg-gray-50 p-3 rounded-lg">
+          <p className="font-semibold text-gray-800 mb-1">Demo Accounts:</p>
+          <p>
+            <span className="font-medium text-purple-600">User:</span>{" "}
+            jhon@example.com
+          </p>
+          <p>
+            <span className="font-medium text-purple-600">Admin:</span>{" "}
+            admin@example.com
+          </p>
+          <p>
+            <span className="font-medium text-purple-600">Password:</span>{" "}
+            password123
+          </p>
+        </div>
       </motion.div>
     </div>
   );
