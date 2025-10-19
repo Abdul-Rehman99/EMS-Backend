@@ -184,60 +184,63 @@ All APIs are fully integrated and tested.
     ```
     The React application will be running on `http://localhost:5173` (or another port if 5173 is busy).
 
+
+
 ## 📂 Project Structure
-eventhub/
-├── client/
-│ ├── public/
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── modals/
-│ │ │ │ ├── BookingModal.jsx
-│ │ │ │ └── EventFormModal.jsx
-│ │ │ └── EventCard.jsx
-│ │ ├── context/
-│ │ │ └── AuthContext.jsx
-│ │ ├── pages/
-│ │ │ ├── admin/
-│ │ │ │ ├── AdminDashboard.jsx
-│ │ │ │ └── AdminEventsPage.jsx
-│ │ │ ├── AuthPage.jsx
-│ │ │ ├── EventDetailsPage.jsx
-│ │ │ ├── MyBookingsPage.jsx
-│ │ │ └── UserEventsPage.jsx
-│ │ ├── App.jsx
-│ │ └── main.jsx
-│ ├── .env.example
-│ ├── index.html
-│ ├── package.json
-│ └── vite.config.js
-│
-└── server/
-├── config/
-│ └── db.js
-├── controllers/
-│ ├── adminController.js
-│ ├── authController.js
-│ ├── bookingController.js
-│ └── eventController.js
-├── middleware/
-│ ├── adminMiddleware.js
-│ ├── authMiddleware.js
-│ └── errorHandler.js
-├── models/
-│ ├── Booking.js
-│ ├── Event.js
-│ ├── User.js
-│ └── index.js
-├── routes/
-│ ├── adminRoutes.js
-│ ├── authRoutes.js
-│ ├── bookingRoutes.js
-│ └── eventRoutes.js
-├── scripts/
-│ ├── generateDummyData.js
-│ └── seed.js
-├── utils/
-│ └── generateToken.js
-├── .env.example
-├── package.json
-└── server.js
+
+    eventhub/
+    ├── client/
+    │   ├── public/
+    │   ├── src/
+    │   │   ├── components/
+    │   │   │   ├── modals/
+    │   │   │   │   ├── BookingModal.jsx
+    │   │   │   │   └── EventFormModal.jsx
+    │   │   │   └── EventCard.jsx
+    │   │   ├── context/
+    │   │   │   └── AuthContext.jsx
+    │   │   ├── pages/
+    │   │   │   ├── admin/
+    │   │   │   │   ├── AdminDashboard.jsx
+    │   │   │   │   └── AdminEventsPage.jsx
+    │   │   │   ├── AuthPage.jsx
+    │   │   │   ├── EventDetailsPage.jsx
+    │   │   │   ├── MyBookingsPage.jsx
+    │   │   │   └── UserEventsPage.jsx
+    │   │   ├── App.jsx
+    │   │   └── main.jsx
+    │   ├── .env.example
+    │   ├── index.html
+    │   ├── package.json
+    │   └── vite.config.js
+    │
+    └── server/
+        ├── config/
+        │   └── db.js
+        ├── controllers/
+        │   ├── adminController.js
+        │   ├── authController.js
+        │   ├── bookingController.js
+        │   └── eventController.js
+        ├── middleware/
+        │   ├── adminMiddleware.js
+        │   ├── authMiddleware.js
+        │   └── errorHandler.js
+        ├── models/
+        │   ├── Booking.js
+        │   ├── Event.js
+        │   ├── User.js
+        │   └── index.js
+        ├── routes/
+        │   ├── adminRoutes.js
+        │   ├── authRoutes.js
+        │   ├── bookingRoutes.js
+        │   └── eventRoutes.js
+        ├── scripts/
+        │   ├── generateDummyData.js
+        │   └── seed.js
+        ├── utils/
+        │   └── generateToken.js
+        ├── .env.example
+        ├── package.json
+        └── server.js
