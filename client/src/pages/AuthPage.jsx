@@ -3,41 +3,64 @@ import { motion } from "framer-motion";
 import { Ticket, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+// Validation Schemas
+const loginSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Enter a valid email address")
+    .required("Email is required"),
+  password: yup.string().required("Password is required"),
+});
+
+const registerSchema = yup.object().shape({
+  name: yup
+    .string()
+    .min(3, "Name must be at least 3 characters")
+    .required("Full name is required"),
+  email: yup
+    .string()
+    .email("Enter a valid email address")
+    .required("Email is required"),
+  password: yup
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { login, register } = useAuth();
+  const { login, register: registerUser } = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(isLogin ? loginSchema : registerSchema),
+  });
 
+  const onSubmit = async (data) => {
     const toastId = toast.loading(
       isLogin ? "Signing in..." : "Creating account..."
     );
 
     try {
       if (isLogin) {
-        await login(formData.email, formData.password);
+        await login(data.email, data.password);
         toast.success("Welcome back! 👋", { id: toastId });
       } else {
-        await register(formData.name, formData.email, formData.password);
+        await registerUser(data.name, data.email, data.password);
         toast.success("Account created successfully! 🎉", { id: toastId });
       }
+      reset();
     } catch (err) {
-      setError(err.message);
-      toast.error(err.message, { id: toastId });
-    } finally {
-      setLoading(false);
+      toast.error(err.message || "Something went wrong", { id: toastId });
     }
   };
 
@@ -65,7 +88,10 @@ const AuthPage = () => {
         {/* Toggle buttons */}
         <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
           <button
-            onClick={() => setIsLogin(true)}
+            onClick={() => {
+              setIsLogin(true);
+              reset();
+            }}
             className={`flex-1 py-2 rounded-md transition-all ${
               isLogin ? "bg-white shadow-sm font-semibold" : "text-gray-600"
             }`}
@@ -73,7 +99,10 @@ const AuthPage = () => {
             Login
           </button>
           <button
-            onClick={() => setIsLogin(false)}
+            onClick={() => {
+              setIsLogin(false);
+              reset();
+            }}
             className={`flex-1 py-2 rounded-md transition-all ${
               !isLogin ? "bg-white shadow-sm font-semibold" : "text-gray-600"
             }`}
@@ -83,76 +112,81 @@ const AuthPage = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {!isLogin && (
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-              required
-            />
+            <div>
+              <input
+                type="text"
+                placeholder="Full Name"
+                {...register("name")}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none ${
+                  errors.name ? "border-red-400" : "border-gray-300"
+                }`}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
           )}
 
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-            required
-          />
-
-          {/* Password Input with toggle */}
-          <div className="relative">
+          <div>
             <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-              required
+              type="email"
+              placeholder="Email Address"
+              {...register("email")}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none ${
+                errors.email ? "border-red-400" : "border-gray-300"
+              }`}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
-            >
-              {showPassword ? (
-                <EyeOff className="w-5 h-5" />
-              ) : (
-                <Eye className="w-5 h-5" />
-              )}
-            </button>
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
-          {/* Error message */}
-          {error && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-red-500 text-sm text-center"
-            >
-              {error}
-            </motion.div>
-          )}
+          <div className="space-y-1">
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                {...register("password")}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none pr-10 ${
+                  errors.password ? "border-red-400" : "border-gray-300"
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
 
-          {/* Submit Button */}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
+          </div>
+
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
           >
-            {loading ? "Processing..." : isLogin ? "Sign In" : "Create Account"}
+            {isSubmitting
+              ? "Processing..."
+              : isLogin
+              ? "Sign In"
+              : "Create Account"}
           </motion.button>
         </form>
 

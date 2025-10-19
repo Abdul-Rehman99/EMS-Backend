@@ -1,25 +1,58 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { X } from 'lucide-react'
+import { motion } from "framer-motion";
+import { X } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useEffect } from "react";
+
+// Validation Schema
+const eventSchema = yup.object().shape({
+  title: yup.string().required("Title is required"),
+  description: yup.string().max(500, "Description is too long"),
+  date: yup.string().required("Date is required"),
+  time: yup.string().required("Time is required"),
+  location: yup.string().required("Location is required"),
+  price: yup
+    .number()
+    .typeError("Price must be a number")
+    .min(0, "Price cannot be negative")
+    .required("Price is required"),
+  available_seats: yup
+    .number()
+    .typeError("Available seats must be a number")
+    .integer("Must be an integer")
+    .min(1, "At least one seat required")
+    .required("Available seats are required"),
+  image: yup.string().url("Enter a valid image URL"),
+});
 
 const EventFormModal = ({ event, onClose, onSave }) => {
-  const [formData, setFormData] = useState(event || {
-    title: '',
-    description: '',
-    location: '',
-    date: '',
-    time: '',
-    price: '',
-    image: '',
-    available_seats: ''
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(eventSchema),
+    defaultValues: event || {
+      title: "",
+      description: "",
+      location: "",
+      date: "",
+      time: "",
+      price: "",
+      image: "",
+      available_seats: "",
+    },
   });
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    await onSave(formData);
-    setLoading(false);
+  // Reset form when event changes (Edit mode)
+  useEffect(() => {
+    if (event) reset(event);
+  }, [event, reset]);
+
+  const onSubmit = async (data) => {
+    await onSave(data);
   };
 
   return (
@@ -37,101 +70,170 @@ const EventFormModal = ({ event, onClose, onSave }) => {
         className="bg-white rounded-2xl p-6 max-w-2xl w-full my-8"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">
-            {event ? 'Edit Event' : 'Create New Event'}
+            {event ? "Edit Event" : "Create New Event"}
           </h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Title
+            </label>
             <input
               type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-              required
+              {...register("title")}
+              className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.title ? "border-red-400" : "border-gray-300"
+              }`}
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+            )}
           </div>
 
+          {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
             <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              {...register("description")}
               rows="3"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+              className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.description ? "border-red-400" : "border-gray-300"
+              }`}
             />
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.description.message}
+              </p>
+            )}
           </div>
 
+          {/* Date & Time */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Date
+              </label>
               <input
                 type="date"
-                value={formData.date}
-                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                required
+                {...register("date")}
+                className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 ${
+                  errors.date ? "border-red-400" : "border-gray-300"
+                }`}
               />
+              {errors.date && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.date.message}
+                </p>
+              )}
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Time
+              </label>
               <input
                 type="time"
-                value={formData.time}
-                onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                {...register("time")}
+                className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 ${
+                  errors.time ? "border-red-400" : "border-gray-300"
+                }`}
               />
+              {errors.time && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.time.message}
+                </p>
+              )}
             </div>
           </div>
 
+          {/* Location */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Location
+            </label>
             <input
               type="text"
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+              {...register("location")}
+              className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.location ? "border-red-400" : "border-gray-300"
+              }`}
             />
+            {errors.location && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.location.message}
+              </p>
+            )}
           </div>
 
+          {/* Price & Seats */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Price
+              </label>
               <input
                 type="number"
                 step="0.01"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                {...register("price")}
+                className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 ${
+                  errors.price ? "border-red-400" : "border-gray-300"
+                }`}
               />
+              {errors.price && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.price.message}
+                </p>
+              )}
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Available Seats</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Available Seats
+              </label>
               <input
                 type="number"
-                value={formData.available_seats}
-                onChange={(e) => setFormData({ ...formData, available_seats: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                {...register("available_seats")}
+                className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 ${
+                  errors.available_seats ? "border-red-400" : "border-gray-300"
+                }`}
               />
+              {errors.available_seats && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.available_seats.message}
+                </p>
+              )}
             </div>
           </div>
 
+          {/* Image */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Image URL
+            </label>
             <input
               type="url"
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+              {...register("image")}
+              className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-purple-500 ${
+                errors.image ? "border-red-400" : "border-gray-300"
+              }`}
             />
+            {errors.image && (
+              <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>
+            )}
           </div>
 
+          {/* Buttons */}
           <div className="flex gap-3 pt-4">
             <button
               type="button"
@@ -142,10 +244,10 @@ const EventFormModal = ({ event, onClose, onSave }) => {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               className="flex-1 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
             >
-              {loading ? 'Saving...' : 'Save Event'}
+              {isSubmitting ? "Saving..." : "Save Event"}
             </button>
           </div>
         </form>
