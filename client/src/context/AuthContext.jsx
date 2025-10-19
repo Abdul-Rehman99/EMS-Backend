@@ -1,7 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 
-// API Base URL - Update this to your backend URL
-const API_URL = 'http://localhost:8080/api';
+const API_URL = import.meta.env.VITE_API_URL+'/api' || 'http://localhost:8080/api';
 
 // Auth Context
 const AuthContext = createContext();

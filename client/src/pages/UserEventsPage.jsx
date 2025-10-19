@@ -13,7 +13,7 @@ import BookingModal from "../components/modals/BookingModal";
 import EventDetailsPage from "./EventDetailsPage";
 import { useAuth } from "../context/AuthContext";
 
-const API_URL = "http://localhost:8080/api";
+const API_URL = import.meta.env.VITE_API_URL+'/api' || "http://localhost:8080/api";
 
 const UserEventsPage = () => {
   const [events, setEvents] = useState([]);

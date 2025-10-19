@@ -3,8 +3,7 @@ import { motion } from 'framer-motion';
 import { Calendar, Ticket, TrendingUp, DollarSign, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-// API Base URL - Update this to your backend URL
-const API_URL = 'http://localhost:8080/api';
+const API_URL = import.meta.env.VITE_API_URL+'/api' || 'http://localhost:8080/api';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);

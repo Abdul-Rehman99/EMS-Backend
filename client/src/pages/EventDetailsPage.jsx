@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Clock, Users, ChevronLeft, Edit, Trash2 } from 'lucide-react';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = import.meta.env.VITE_API_URL+'/api' || 'http://localhost:8080/api';
 
 const EventDetailsPage = ({ eventId, onBack, onBook, onEdit, onDelete, isAdmin }) => {
   const [event, setEvent] = useState(null);

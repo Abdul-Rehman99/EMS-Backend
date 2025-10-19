@@ -5,8 +5,7 @@ import { Calendar, MapPin, Ticket } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
-// API Base URL - Update this to your backend URL
-const API_URL = 'http://localhost:8080/api';
+const API_URL = import.meta.env.VITE_API_URL+'/api' || 'http://localhost:8080/api';
 
 const MyBookingsPage = () => {
   const [bookings, setBookings] = useState([]);

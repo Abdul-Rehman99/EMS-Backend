@@ -8,9 +8,6 @@ import AuthPage from './pages/AuthPage';
 import AdminEventsPage from './pages/admin/AdminEventsPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
-// API Base URL - Update this to your backend URL
-const API_URL = 'http://localhost:8080/api';
-
 
 // Main App Component
 const App = () => {
